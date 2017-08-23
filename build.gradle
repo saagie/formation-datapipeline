@@ -1,0 +1,49 @@
+group 'io.saagie'
+version version
+
+apply plugin: 'scala'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven {
+        url 'http://packages.confluent.io/maven/'
+    }
+}
+
+configurations {
+    compile.exclude module: 'slf4j-log4j12'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'com.fasterxml.jackson.core:jackson-databind:2.6.5'
+    }
+}
+
+dependencies {
+    compile group: 'org.scala-lang', name: 'scala-library', version: "$scalaMajor.$scalaMinor"
+    compile group: 'com.sksamuel.avro4s', name: "avro4s-core_$scalaMajor", version: '1.7.0'
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.11.0.0'
+    compile group: 'io.confluent', name: 'kafka-avro-serializer', version: '3.2.2'
+    compile group: 'com.github.azakordonets', name: "fabricator_$scalaMajor", version: '2.1.5'
+    compile("com.github.azakordonets:fabricator_$scalaMajor:2.1.5")
+    compile group: 'com.typesafe.akka', name: "akka-actor_$scalaMajor", version: '2.5.3'
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.8.1'
+    compile group: 'org.json4s', name: "json4s-native_$scalaMajor", version: '3.5.2'
+
+    compile group: 'com.twitter', name: "bijection-avro_$scalaMajor", version: '0.9.5'
+    compile group: 'org.apache.spark', name: "spark-sql-kafka-0-10_$scalaMajor", version: '2.2.0'
+    compile group: 'org.apache.spark', name: "spark-sql_$scalaMajor", version: '2.2.0'
+    compile group: 'org.apache.spark', name: "spark-streaming_$scalaMajor", version: '2.2.0'
+    compile group: 'org.apache.spark', name: "spark-streaming-kafka-0-10_$scalaMajor", version: '2.2.0'
+
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
+    compile group: 'org.codehaus.groovy', name: 'groovy', version: groovyVersion
+    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: log4jOverSlf4jVersion
+
+    testCompile group: 'junit', name: 'junit', version: junit
+    testCompile group: 'com.typesafe.akka', name: 'akka-testkit_2.11', version: '2.5.3'
+}
