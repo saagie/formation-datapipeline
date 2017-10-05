@@ -31,7 +31,7 @@ appender("console-err", ConsoleAppender) {
     }
 }
 
-logger("org.apache.kafka", DEBUG)
+logger("org.apache.kafka", WARN)
 logger("org.apache.spark", WARN)
 logger("org.spark_project.jetty", WARN)
 

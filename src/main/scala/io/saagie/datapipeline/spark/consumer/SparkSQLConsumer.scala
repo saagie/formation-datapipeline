@@ -1,9 +1,10 @@
 package io.saagie.datapipeline.spark.consumer
 
 import com.sksamuel.avro4s.{AvroSchema, RecordFormat}
-import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
+import com.twitter.bijection.Injection
+import com.twitter.bijection.avro.GenericAvroCodecs
 import io.saagie.datapipeline.common.{Configuration, Request}
+import org.apache.avro.Schema
 import org.apache.avro.generic.GenericRecord
 import org.apache.spark.sql.streaming.OutputMode
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -16,8 +17,9 @@ object SparkSQLConsumer extends App {
     .appName("Datapipeline SQL Formation")
     .getOrCreate()
 
-  val format = RecordFormat[Request]
-  val schema = AvroSchema[Request]
+  val schema: Schema = AvroSchema[Request]
+  val format: RecordFormat[Request] = RecordFormat[Request]
+  val injection: Injection[GenericRecord, Array[Byte]] = GenericAvroCodecs.toBinary(schema)
 
   import sparkSession.implicits._
 
@@ -30,12 +32,9 @@ object SparkSQLConsumer extends App {
     .option("subscribe", configuration.topic)
     .load()
 
-  val schemaRegistryClient = new CachedSchemaRegistryClient(configuration.schemaRegistryUrl, 1000)
-  val deserializer = new KafkaAvroDeserializer(schemaRegistryClient)
-
   dataset
     .select($"value".as[Array[Byte]])
-    .map(v => format.from(deserializer.deserialize("", v, schema).asInstanceOf[GenericRecord]).toTuple)
+    .map(v => format.from(injection.invert(v).get).toTuple)
     .toDF(Request.columnsNames: _*)
     .groupBy($"user_agent")
     .count()
