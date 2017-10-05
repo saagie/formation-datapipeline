@@ -37,7 +37,5 @@ object Request {
       Instant.now.getEpochSecond,
       location.latitude(-89, 89).toDouble,
       location.longitude(-179, 179).toDouble)
-
-    location.coordinates
   }
 }
