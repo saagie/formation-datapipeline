@@ -46,10 +46,11 @@ class RequestGenerator extends Actor with ActorLogging {
       lines.foreach(writer.writeRow)
       writer.close()
       log.info("Requests writen")
-    case "generateRequest" => self ! Request()
+    case "generateRequest" => self ! Request.generateRequest()
     case request: Request =>
       //      val record = format.to(request)
       //      val ba = injection.apply(record)
+      log.info("My value {}", write(request))
       kafkaProducer.send(new ProducerRecord(configuration.topic, request.uuid.toString, write(request)))
       count += 1
       if (count % 1000 == 0)
