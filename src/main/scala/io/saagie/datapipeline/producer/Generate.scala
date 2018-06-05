@@ -9,9 +9,13 @@ object Generate extends App {
   val system = ActorSystem("Generate")
   val generator = system.actorOf(Props[RequestGenerator])
   val begin = System.currentTimeMillis()
+//  generator ! "generateSaltRequest"
+
   while (true) {
+    //  for (_ <- 0 until 1000000) {
     generator ! "generateRequest"
-    Thread.sleep(1000)
+    Thread.sleep(5000)
+    println("One request sent")
   }
   println(s"${System.currentTimeMillis() - begin}ms")
 }

@@ -4,7 +4,7 @@
 *.log
 ### Gradle template
 .gradle
-/build/
+#/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting

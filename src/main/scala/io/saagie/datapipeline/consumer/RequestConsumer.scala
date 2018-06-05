@@ -23,12 +23,14 @@ object RequestConsumer extends App {
   properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.bootstrapServers)
   properties.put(ConsumerConfig.GROUP_ID_CONFIG, "request-consumer")
   properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, classOf[StringDeserializer].getName)
-  properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, classOf[ByteArrayDeserializer].getName)
+  properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, classOf[StringDeserializer].getName)
 
-  val kafkaConsumer = new KafkaConsumer[String, Array[Byte]](properties)
+  val kafkaConsumer = new KafkaConsumer[String, String](properties)
 
   kafkaConsumer.subscribe(List(configuration.topic).asJava)
 
-  val record = kafkaConsumer.poll(10000)
-  println(record.asScala.map(r => format.from(injection.invert(r.value()).get)).foreach(println))
+  val record = kafkaConsumer.poll(120000)
+  println(record.asScala.foreach(r => println(r.value().getBytes.map(_.toChar).mkString)))
+
+//    .map(r => format.from(injection.invert(r.value()).get)).foreach(println))
 }

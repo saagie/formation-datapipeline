@@ -1,3 +1,7 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.1'
+}
+
 group 'io.saagie'
 version version
 
@@ -28,15 +32,30 @@ dependencies {
     compile group: 'com.typesafe.akka', name: "akka-actor_$scalaMajor", version: akkaVersion
 
     compile group: 'com.twitter', name: "bijection-avro_$scalaMajor", version: bijectionVersion
-    compile group: 'org.apache.spark', name: "spark-sql-kafka-0-10_$scalaMajor", version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-sql_$scalaMajor", version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-streaming_$scalaMajor", version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-streaming-kafka-0-10_$scalaMajor", version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-sql-kafka-0-10_$scalaMajor", version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-sql_$scalaMajor", version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-streaming_$scalaMajor", version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-streaming-kafka-0-10_$scalaMajor", version: sparkVersion
 
     compile group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
     compile group: 'org.codehaus.groovy', name: 'groovy', version: groovyVersion
     compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: log4jOverSlf4jVersion
 
+    compile group: 'com.github.tototoshi', name: "scala-csv_$scalaMajor", version: '1.3.5'
+    compile group: 'org.json4s', name: "json4s-native_$scalaMajor", version: '3.5.3'
+
+    compile files('libs/hive_service.jar')
+    compile files('libs/TCLIServiceClient.jar')
+    compile files('libs/ImpalaJDBC41.jar')
+    compile group: 'org.apache.thrift', name: 'libfb303', version: '0.9.3'
+
     testCompile group: 'junit', name: 'junit', version: junit
     testCompile group: 'com.typesafe.akka', name: 'akka-testkit_2.11', version: akkaVersion
+}
+
+shadowJar {
+    zip64 = true
+    manifest {
+        attributes "Main-Class": "io.saagie.datapipeline.producer.Generate"
+    }
 }
